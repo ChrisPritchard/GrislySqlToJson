@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using GrislyGrotto;
 using System.IO;
 using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace GrislySqlToJson
 {
@@ -13,15 +14,18 @@ namespace GrislySqlToJson
         {
             var connString = args[0];
             var context = new GrislyGrottoDbContext(connString);
-
-            var outDir = "./out";
-            if(Directory.Exists(outDir))
-                Directory.Delete(outDir, true);
-            Directory.CreateDirectory(outDir);
-
             var posts = context.Posts.Include(o => o.Comments).Take(100).ToArray();
-            foreach(var post in posts)
-                File.WriteAllText($"{outDir}/{post.Key}.json", JsonConvert.SerializeObject(post));
+
+            using(var zipFile = new FileStream("./out.zip", FileMode.Create))
+            using(var archive = new ZipArchive(zipFile, ZipArchiveMode.Create))
+            {
+                foreach(var post in posts)
+                {
+                    var entry = archive.CreateEntry(post.Key + ".json");
+                    using(var writer = new StreamWriter(entry.Open()))
+                        writer.Write(JsonConvert.SerializeObject(post));
+                }
+            }
         }
     }
 }
