@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace GrislyGrotto
 {
@@ -11,18 +12,18 @@ namespace GrislyGrotto
         [Required, Key, Column("Username")]
         public string Username { get; set; }
 
-        [NotMapped]
+        [NotMapped, JsonIgnore]
         public string PasswordHash
         {
             get { return Password?.Split(',')[0]; }
         }
-        [NotMapped]
+        [NotMapped, JsonIgnore]
         public string PasswordSalt 
         { 
             get { return Password?.Split(',')[1]; }
         }
 
-        [Required]
+        [Required, JsonIgnore]
         public string Password { get; set; }
         
         public string DisplayName { get; set; }

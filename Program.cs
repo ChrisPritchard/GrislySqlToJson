@@ -15,7 +15,7 @@ namespace GrislySqlToJson
         {
             var connString = args[0];
             var context = new GrislyGrottoDbContext(connString);
-            var posts = context.Posts.Include(o => o.Comments).ToArray();
+            var posts = context.Posts.Include(o => o.Author).Include(o => o.Comments).ToArray();
 
             using(var zipFile = new FileStream($"./allposts-{DateTime.Now.ToString("dd-MM-yyyy")}.zip", FileMode.Create))
             using(var archive = new ZipArchive(zipFile, ZipArchiveMode.Create))
