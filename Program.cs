@@ -14,13 +14,13 @@ namespace GrislySqlToJson
         static void Main(string[] args)
         {
             var connString = args[0];
-            var context = new GrislyGrottoDbContext(connString);
-            var posts = context.Posts.Include(o => o.Author).Include(o => o.Comments).ToArray();
-
+            
+            using(var context = new GrislyGrottoDbContext(connString))
             using(var zipFile = new FileStream($"./allposts-{DateTime.Now.ToString("dd-MM-yyyy")}.zip", FileMode.Create))
             using(var archive = new ZipArchive(zipFile, ZipArchiveMode.Create))
             {
                 var index = new List<(string,string)>();
+                var posts = context.Posts.Include(o => o.Author).Include(o => o.Comments).ToArray();
                 foreach(var post in posts)
                 {
                     var entry = archive.CreateEntry(post.Key + ".json");
