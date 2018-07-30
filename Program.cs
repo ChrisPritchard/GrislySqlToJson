@@ -13,6 +13,12 @@ namespace GrislySqlToJson
     {
         static void Main(string[] args)
         {
+            if(args.Length == 0)
+            {
+                Console.WriteLine("Please specify the connection string as an argument");
+                return;
+            }
+
             var connString = args[0];
             
             using(var context = new GrislyGrottoDbContext(connString))
@@ -37,6 +43,8 @@ namespace GrislySqlToJson
                         writer.WriteLine(date + "\t" + key);
                     });
             }
+
+            Console.WriteLine("Done");
         }
     }
 }
